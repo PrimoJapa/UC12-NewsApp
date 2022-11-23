@@ -1,20 +1,20 @@
 import React, { Component } from 'react';
-import {Text,View,ScrollView,TouchableOpacity, Image} from 'react-native';
+import { Text, View, TouchableOpacity, FlatList } from 'react-native';
 
 import FastImage from 'react-native-fast-image'
 
 export default class MyList extends Component {
     state = {
-       loading: false,
-       data: [],
-       current_page: 1,
-       error: null,
-       hasMore: true
-     }
-     
-     componentDidMount() { this.getListOfData(); };
+        loading: false,
+        data: [],
+        current_page: 1,
+        error: null,
+        hasMore: true
+    }
 
-     getListOfData = () => {
+    componentDidMount() { this.getListOfData(); };
+
+    getListOfData = () => {
         if (this.state.loading) { return; }
         this.setState({ loading: true });
         let newData = [];
@@ -25,19 +25,19 @@ export default class MyList extends Component {
             id: this.state.data.length
         });
         newData.push({
-            title: "Curabitur vulputate", 
+            title: "Curabitur vulputate",
             text: "Curabitur vulputate enim in lacus imperdiet, a convallis odio posuere. Nulla id ex et purus sodales rutrum non eu eros. Ut consequat est lacus.",
             image: require("../images/img2.png"),
-            id: this.state.data.length+1
+            id: this.state.data.length + 1
         });
         newData.push({
-            title: "Proin hendrerit", 
+            title: "Proin hendrerit",
             text: "Proin hendrerit nisl id turpis bibendum, sit amet scelerisque augue elementum. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla a blandit sapien.",
             image: require("../images/img3.png"),
-            id: this.state.data.length+2
+            id: this.state.data.length + 2
         });
         this.setState({
-            hasMore: true,        
+            hasMore: true,
             data: [...this.state.data, ...newData],
             loading: false,
             current_page: this.state.current_page + 1
@@ -45,37 +45,42 @@ export default class MyList extends Component {
        
     }
 
-    isCloseToBottom({ layoutMeasurement, contentOffset, contentSize }) {   
-        return layoutMeasurement.height + contentOffset.y 
-        >= contentSize.height - 50; 
+    isCloseToBottom({ layoutMeasurement, contentOffset, contentSize }) {
+        return layoutMeasurement.height + contentOffset.y
+            >= contentSize.height - 50; 
     }
 
-    renderList = () => {
-        return ( this.state.data.map((u) => {
-          return ( 
-            <TouchableOpacity key={u.id}>
-                    <View style={{ padding: 10 }}>
-                    <FastImage
-                            style={{ width: 200, height: 200 }}
-                            source={u.image}
-                            resizeMode={FastImage.resizeMode.contain}
-                        />
-                       <Text style={{ fontSize: 15}}>{u.title}</Text>        
-                       <Text>{u.text}</Text>
-                    </View>
-             </TouchableOpacity>);
-            })
-       );
-      }
+    renderList = (u) => {
 
-    render() {
         return (
-          <ScrollView onScroll={({ nativeEvent }) => {
-            if (this.isCloseToBottom(nativeEvent) && this.state.hasMore) {                
-                 this.getListOfData(); }}}> 
-            {this.renderList()} 
-          </ScrollView>
-          );
-      }
+            <TouchableOpacity key={u.item.id}>
+                <View style={{ padding: 10 }}>
+                    <FastImage
+                        style={{ width: 200, height: 200 }}
+                        source={u.item.image}
+                        resizeMode={FastImage.resizeMode.contain}
+                    />
+                    <Text style={{ fontSize: 15 }}>{u.item.title}</Text>
+                    <Text>{u.item.text}</Text>
+                </View>
+            </TouchableOpacity>);
+
+}
+render() {
+    return (
+        <View>
+            <FlatList data={this.state.data}
+                renderItem={item => this.renderList(item)}
+                keyExtractor={item => item.id.toString()}
+                numColumns={1}
+                initialNumToRender={15}
+                onScroll={({ nativeEvent }) => {
+                    if (this.isCloseToBottom(nativeEvent) && this.state.hasMore) {
+                        this.getListOfData();
+                    }
+                }} />
+        </View>
+    );
+}
 
 }
