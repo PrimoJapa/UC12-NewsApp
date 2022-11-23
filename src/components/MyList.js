@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import {Text,View,ScrollView,TouchableOpacity, Image} from 'react-native';
 
+import FastImage from 'react-native-fast-image'
+
 export default class MyList extends Component {
     state = {
        loading: false,
@@ -10,7 +12,7 @@ export default class MyList extends Component {
        hasMore: true
      }
      
-     componentWillMount() { this.getListOfData(); };
+     componentDidMount() { this.getListOfData(); };
 
      getListOfData = () => {
         if (this.state.loading) { return; }
@@ -53,7 +55,11 @@ export default class MyList extends Component {
           return ( 
             <TouchableOpacity key={u.id}>
                     <View style={{ padding: 10 }}>
-                    <Image style={{ width: 200, height: 200 }} source={u.image} ></Image>
+                    <FastImage
+                            style={{ width: 200, height: 200 }}
+                            source={u.image}
+                            resizeMode={FastImage.resizeMode.contain}
+                        />
                        <Text style={{ fontSize: 15}}>{u.title}</Text>        
                        <Text>{u.text}</Text>
                     </View>
